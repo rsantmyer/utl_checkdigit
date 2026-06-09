@@ -1,0 +1,32 @@
+package:
+  name: utl_checkdigit
+  version: "1.0.0"
+  description: Oracle package for generating, appending, and validating Luhn mod-N check digits.
+  vendor: 512itconsulting
+  # license: Apache-2.0
+
+database:
+  platform: oracle
+  minimum_version: "19c"
+
+core:
+  minimum_version: "3.4.0"
+
+# Package dependencies beyond Core. Version constraints:
+#   exact:        "1.2.0"
+#   compatible:   "^1.2.0"  (>=1.2.0, <2.0.0)
+#   conservative: "~1.2.0"  (>=1.2.0, <1.3.0)
+# dependencies:
+#   - name: package_name
+#     version: "^1.0.0"
+
+scripts:
+  install: deployment_manifests/deploy.sql
+  # upgrade: deployment_manifests/update.sql
+  # upgrade_from: "^1.0.0"  # Version constraint the upgrade script applies to
+  # validate: deployment_manifests/validate.sql
+  # uninstall: deployment_manifests/uninstall.sql
+
+publish:
+  group: com.512itconsulting.database
+  artifact_id: utl_checkdigit

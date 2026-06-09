@@ -1,0 +1,7 @@
+# dbpm artifacts
+dbpm-lock.json
+*.dbpm.receipt.json
+
+# SQL*Plus / SQLcl logs
+*.log
+*.lst

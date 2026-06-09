@@ -1,8 +1,14 @@
 SET DEFINE ON
 DEFINE APPLICATION_NAME = 'UTL_CHECKDIGIT'
-DEFINE DEPLOY_VERSION = '1'
+DEFINE DEPLOY_VERSION_MAJOR = '1'
+DEFINE DEPLOY_VERSION_MINOR = '0'
+DEFINE DEPLOY_VERSION_PATCH = '0'
+DEFINE DEPLOY_COMMIT_HASH = '&&1'
 
-SPOOL deploy.&&APPLICATION_NAME..log
+COLUMN CURRENT_SCHEMA new_value CURRENT_SCHEMA
+SELECT sys_context('USERENV','CURRENT_SCHEMA') AS CURRENT_SCHEMA FROM DUAL;
+
+SPOOL deploy.&&APPLICATION_NAME..&&CURRENT_SCHEMA..&&DEPLOY_VERSION_MAJOR..&&DEPLOY_VERSION_MINOR..&&DEPLOY_VERSION_PATCH..log
 
 --PRINT BIND VARIABLE VALUES
 SET AUTOPRINT ON                    
@@ -17,13 +23,29 @@ SET SERVEROUTPUT ON
 REM SET SHOWMODE ON                     
 
 --ALLOW BLANK LINES WITHIN A SQL COMMAND OR SCRIPT
---SET SQLBLANKLINES ON                
+SET SQLBLANKLINES ON                
 
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
 
-EXEC PKG_APPLICATION.delete_application_p(ip_application_name => '&&APPLICATION_NAME', ip_fail_on_not_found => 'N' );
-EXEC pkg_application.begin_deployment_p(ip_application_name => '&&APPLICATION_NAME', ip_version => &&DEPLOY_VERSION, ip_deployment_type => pkg_application.c_deploy_type_initial);
+PROMPT Beginning deployment of &&APPLICATION_NAME &&DEPLOY_VERSION_MAJOR..&&DEPLOY_VERSION_MINOR..&&DEPLOY_VERSION_PATCH
+
+BEGIN
+   pkg_application.begin_deployment_p
+      ( ip_deploy_commit_hash => '&&DEPLOY_COMMIT_HASH'
+      , ip_application_name   => '&&APPLICATION_NAME'
+      , ip_major_version      => &&DEPLOY_VERSION_MAJOR
+      , ip_minor_version      => &&DEPLOY_VERSION_MINOR
+      , ip_patch_version      => &&DEPLOY_VERSION_PATCH
+      , ip_deployment_type    => pkg_application.c_deploy_type_initial
+      , ip_notes =>
+Q'{
+1.0.0
+* Initial dbpm package release for UTL_CHECKDIGIT.
+}'
+      );
+END;
+/
 --
 EXEC pkg_application.add_dependency_p  (ip_application_name => '&&APPLICATION_NAME', ip_depends_on => 'CORE');
 --
@@ -38,14 +60,17 @@ EXEC pkg_application.validate_sys_privs_p   (ip_application_name => '&&APPLICATI
 
 --Package Specifications
 Prompt Creating Package Specifications
-@@../Packages/utl_checkdigit.pks
+@@../packages/utl_checkdigit.pks
 
 --Package Bodies
 Prompt Creating Package Bodies
-@@../Packages/utl_checkdigit.pkb
+@@../packages/utl_checkdigit.pkb
 
 SET DEFINE ON
 EXEC pkg_application.validate_objects_p(ip_application_name => '&&APPLICATION_NAME');
 EXEC pkg_application.set_deployment_complete_p(ip_application_name => '&&APPLICATION_NAME');
 
+PROMPT &&APPLICATION_NAME deployment complete
+
 SPOOL OFF
+EXIT SUCCESS
