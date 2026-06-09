@@ -2,7 +2,7 @@ package:
   name: utl_checkdigit
   version: "1.0.0"
   description: Oracle package for generating, appending, and validating Luhn mod-N check digits.
-  vendor: 512itconsulting
+  vendor: rsantmyer
   # license: Apache-2.0
 
 database:
@@ -28,5 +28,5 @@ scripts:
   # uninstall: deployment_manifests/uninstall.sql
 
 publish:
-  group: com.512itconsulting.database
+  group: io.github.rsantmyer.database
   artifact_id: utl_checkdigit
