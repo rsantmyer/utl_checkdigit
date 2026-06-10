@@ -15,12 +15,14 @@ validating Luhn mod-N check digits in bases 1 through 36.
 
 ## dbpm
 
-This repository is packaged for dbpm with `dbpm.yaml`.
+This repository is packaged for [dbpm](https://github.com/512itconsulting/dbpm)
+with `dbpm.yaml`.
 
 ```sh
 dbpm plan . --mode install
 dbpm publish . --target gh-maven:rsantmyer/utl_checkdigit --dry-run --signing-key "$DBPM_SIGNING_KEY"
 ```
 
-The package depends on dbpm Core 3.4.0 or newer so DBPM-provided deployment
-provenance can be recorded during installation.
+The package depends on [dbpm Core](https://github.com/512itconsulting/core)
+3.4.0 or newer so DBPM-provided deployment provenance can be recorded during
+installation.
